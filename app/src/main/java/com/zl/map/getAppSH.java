@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
+import com.amap.api.maps.AMap;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
@@ -38,6 +40,7 @@ public class getAppSH {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
+
         return null;
     }
 }

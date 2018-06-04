@@ -1,6 +1,7 @@
 package com.zl.map
 
 import android.Manifest
+import android.content.ComponentName
 import android.content.Context
 import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
@@ -23,21 +24,30 @@ import com.amap.api.maps.offlinemap.OfflineMapStatus
 import kotlinx.android.synthetic.main.activity_main.*
 import android.location.LocationManager
 import android.content.Context.LOCATION_SERVICE
+import android.content.ServiceConnection
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.os.IBinder
 import com.amap.api.maps.CameraUpdateFactory
+import com.amap.api.maps.model.LatLng
+import com.amap.api.maps.model.PolylineOptions
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
+import java.util.*
 
 
 class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,OfflineMapManager.OfflineMapDownloadListener,AMapLocationListener,View.OnClickListener
-    ,LocationSource{
+    ,LocationSource,StepService.CallBack{
+    override fun StepChanged(value: Int) {
+
+    }
 
     private var aMap: AMap? = null
     private var mListener: LocationSource.OnLocationChangedListener? = null
     private var mLocationClient: AMapLocationClient? = null
     private var mLocationOption: AMapLocationClientOption? = null
     private var offLineManager: OfflineMapManager? = null
+    private var mPointList: ArrayList<LatLng>? = null;
     /**
      * 停止定位
      */
@@ -75,6 +85,7 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
             mLocationClient!!.stopLocation();
             mLocationClient!!.startLocation();
         }
+
     }
 
     override fun onClick(p0: View?) {
@@ -93,6 +104,13 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
             mListener!!.onLocationChanged(p0)
             var offLineCityLists = offLineManager!!.downloadOfflineMapCityList;
             var hasMap = false
+
+            var point = LatLng(p0.latitude,p0.longitude)
+            if (!mPointList!!.contains(point)) {
+                mPointList!!.add(point)
+                PaintLine(mPointList!!)
+            }
+            Log.e("TGA", "size==="+mPointList!!.size)
             //lambda 标签名和跳出foreach 循环
             offLineCityLists.forEach block@{
                 if (p0.city.equals(it)) {
@@ -104,6 +122,11 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
                 offLineManager!!.downloadByCityName(p0.cityCode)
             }
         }
+    }
+
+    private fun PaintLine(mPointList: ArrayList<LatLng>) {
+        aMap!!.addPolyline(PolylineOptions().
+        addAll(mPointList).width(10F).color(Color.argb(255, 1, 1, 1)));
     }
 
 
@@ -132,6 +155,8 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
         Log.e("TGA","SHA1:  "+getAppSH.sHA1(this))
 //        Toast.makeText(this,"GPS is open:  "+isOPen(this),Toast.LENGTH_SHORT).show()
         map_view.onCreate(savedInstanceState)
+        mPointList = ArrayList<LatLng>()
+
 
         if (hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
             getLocation()
@@ -141,11 +166,35 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
 
 //        setMapPoint()
 //        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-
+//        var mStepService =
         val btn = findViewById<Button>(R.id.btn) as Button
         btn.setOnClickListener(this)
     }
 
+
+    private var mService: StepService? = null
+    private var mConnection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            mService = (service as StepService.StepBinder).service
+            mService!!.registCallback(this@MainActivity)
+        }
+
+        override fun onServiceDisconnected(className: ComponentName) {
+            mService = null
+        }
+    }
+
+//    private var mCallBack: StepService.CallBack? = Objects: StepService.CallBack {
+//
+//    }
+
+//    private val mCallback = object : StepService.CallBack {
+//
+//        override fun StepChanged(value: Int) {
+////            Toast.makeText("")
+//        }
+//
+//    }
     private fun initAMap() {
 
         if (aMap == null) {
