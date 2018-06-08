@@ -24,6 +24,7 @@ import com.amap.api.maps.offlinemap.OfflineMapStatus
 import kotlinx.android.synthetic.main.activity_main.*
 import android.location.LocationManager
 import android.content.Context.LOCATION_SERVICE
+import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
@@ -37,9 +38,10 @@ import java.util.*
 
 
 class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,OfflineMapManager.OfflineMapDownloadListener,AMapLocationListener,View.OnClickListener
-    ,LocationSource,StepService.CallBack{
-    override fun StepChanged(value: Int) {
+    ,LocationSource,StepsService.CallBack{
 
+    override fun StepChanged(value: Int) {
+        Toast.makeText(this@MainActivity,"step:  "+value,Toast.LENGTH_SHORT).show()
     }
 
     private var aMap: AMap? = null
@@ -48,6 +50,7 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
     private var mLocationOption: AMapLocationClientOption? = null
     private var offLineManager: OfflineMapManager? = null
     private var mPointList: ArrayList<LatLng>? = null;
+    private var mIntent: Intent? = null
     /**
      * 停止定位
      */
@@ -99,7 +102,7 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
 //        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         if (p0 != null) {
             var city = p0.city;
-            Toast.makeText(this,city+"123456===="+p0.cityCode,Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this,city+"123456===="+p0.cityCode,Toast.LENGTH_SHORT).show()
             offLineManager = OfflineMapManager(this,this)
             mListener!!.onLocationChanged(p0)
             var offLineCityLists = offLineManager!!.downloadOfflineMapCityList;
@@ -110,7 +113,6 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
                 mPointList!!.add(point)
                 PaintLine(mPointList!!)
             }
-            Log.e("TGA", "size==="+mPointList!!.size)
             //lambda 标签名和跳出foreach 循环
             offLineCityLists.forEach block@{
                 if (p0.city.equals(it)) {
@@ -168,14 +170,26 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
 //        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
 //        var mStepService =
         val btn = findViewById<Button>(R.id.btn) as Button
-        btn.setOnClickListener(this)
+        btn.setOnClickListener(this@MainActivity)
+
+        mIntent = Intent(this, StepsService::class.java)
+        bindStepService()
+    }
+
+    /**
+     *
+     */
+    private fun bindStepService() {
+
+        bindService(mIntent,mConnection, Context.BIND_AUTO_CREATE+ Context.BIND_DEBUG_UNBIND)
+        startService(mIntent)
     }
 
 
-    private var mService: StepService? = null
+    private var mService: StepsService? = null
     private var mConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            mService = (service as StepService.StepBinder).service
+            mService = (service as StepsService.StepsBinder).getService()
             mService!!.registCallback(this@MainActivity)
         }
 
@@ -225,6 +239,12 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
     override fun onDestroy() {
         super.onDestroy()
         deactivate()
+        unBindStepService()
+    }
+
+    private fun unBindStepService() {
+        unbindService(mConnection)
+        stopService(mIntent)
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {

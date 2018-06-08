@@ -7,6 +7,7 @@ import android.hardware.SensorManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 /**
  * Created by zhangli on 2018/6/4.
@@ -18,6 +19,8 @@ public class StepService extends Service{
     private Sensor mSensor;
 
     private CallBack mCallBack;
+    private StepDetector stepDetector;
+    public static int step = 0;
 
     public class StepBinder extends Binder{
         public StepService getService(){
@@ -38,28 +41,45 @@ public class StepService extends Service{
     public void onCreate() {
         super.onCreate();
 
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
-
-        StepDetector stepDetector = new StepDetector();
+        stepDetector = new StepDetector();
+        registerDetector();
         stepDetector.OnStepDetector(new StepChangeListener() {
             @Override
             public void stepChanged(int value) {
-                mCallBack.StepChanged(value);
+                if (mCallBack != null) {
+                    mCallBack.StepChanged(value);
+                }
             }
         });
+
+        
+    }
+
+    private void registerDetector() {
+        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mSensorManager.registerListener(stepDetector, mSensor, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        step = 0;
         return super.onStartCommand(intent, flags, startId);
     }
+
+    public void unRegisterDector(){
+        if(stepDetector != null && mSensorManager != null){
+//            stepDetector.setStepListener(null);
+            mSensorManager.unregisterListener(stepDetector);
+        }
+    }
+
 
     @Override
     public void onDestroy() {
         super.onDestroy();
 
+        unRegisterDector();
     }
 
     @Override
