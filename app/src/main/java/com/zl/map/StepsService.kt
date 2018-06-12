@@ -11,7 +11,12 @@ import android.os.IBinder
 /**
  * Created by zhangli on 2018/6/8.
  */
-class StepsService:Service() {
+class StepsService:Service(),StepsChangeListener {
+    override fun stepChanged(value: Int) {
+        if (mCallBack != null) {
+            mCallBack!!.StepChanged(value)
+        }
+    }
 
     private var mSensorManager: SensorManager? = null
     private var mSensor: Sensor? = null
@@ -44,12 +49,16 @@ class StepsService:Service() {
 //                mCallBack!!.StepChanged(value)
 //            }
 //        })
-        stepDetector!!.OnStepDetector(StepChangeListener {
-            value ->
-            if (mCallBack != null) {
-                mCallBack!!.StepChanged(value)
-            }
-        })
+//        stepDetector!!.OnStepDetector(StepChangeListener {
+//            value ->
+//            if (mCallBack != null) {
+//                mCallBack!!.StepChanged(value)
+//            }
+//        })
+
+        stepDetector!!.OnStepDetector(this@StepsService)
+
+
     }
 
     override fun onDestroy() {

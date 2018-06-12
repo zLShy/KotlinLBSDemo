@@ -17,6 +17,8 @@ public class StepDetector implements SensorEventListener {
 
     private StepChangeListener mStepListener;
 
+    private StepsChangeListener mStepsListener;
+
     //存放三轴数据
     private float[] oriValues = new float[3];
     private final int valueNum = 4;
@@ -58,6 +60,11 @@ public class StepDetector implements SensorEventListener {
     public void OnStepDetector(StepChangeListener mStepListener) {
         this.mStepListener = mStepListener;
     }
+
+    public void OnStepDetector(StepsChangeListener mStepListener) {
+        this.mStepsListener = mStepListener;
+    }
+
     public StepDetector() {
 //        int h = 480;
 //        mYOffset = h * 0.5f;
@@ -101,8 +108,8 @@ public class StepDetector implements SensorEventListener {
 //                        int frequency = mCalorieInfo.getFrequency();
 //                        mCalorieInfo.setFrequency(++frequency);
                         CURRENT_STEP++;
-                        if (null != mStepListener) {
-                            mStepListener.stepChanged(CURRENT_STEP);
+                        if (null != mStepsListener) {
+                            mStepsListener.stepChanged(CURRENT_STEP);
                         }
                     }
                 }
