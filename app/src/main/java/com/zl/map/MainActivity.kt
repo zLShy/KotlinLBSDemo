@@ -32,6 +32,14 @@ import android.os.IBinder
 import com.amap.api.maps.CameraUpdateFactory
 import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.PolylineOptions
+import com.zl.map.RetrofitRequest.ApiMethods
+import com.zl.map.RetrofitRequest.CreatRunClass
+import com.zl.map.RetrofitRequest.ProgressObserver
+import com.zl.map.RetrofitRequest.onSuccessListener
+import io.reactivex.internal.util.HalfSerializer.onNext
+import okhttp3.ResponseBody
+import retrofit2.Response
+import java.io.IOException
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*
@@ -159,6 +167,8 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
         map_view.onCreate(savedInstanceState)
         mPointList = ArrayList<LatLng>()
 
+//        startActivity(Intent(this.applicationContext,
+//                com.amap.api.maps.offlinemap.OfflineMapActivity::class.java))
 
         if (hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
             getLocation()
@@ -174,6 +184,12 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
 
         mIntent = Intent(this, StepsService::class.java)
         bindStepService()
+        map_view.setOnClickListener {
+            view ->
+            Toast.makeText(this,"heh",Toast.LENGTH_SHORT).show()
+        }
+
+        getData()
     }
 
     /**
@@ -276,4 +292,31 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
         initAMap()
     }
 
+    fun getData() {
+      val  listener = object: onSuccessListener<Response<ResponseBody>>{
+          override fun onNext(t: Response<ResponseBody>) {
+              Log.e("TGA","code===="+t.code())
+              try {
+                  Log.e("TGA", t.body().toString())
+                  Log.e("TGA", String(t.body()!!.bytes()))
+              } catch (e: IOException) {
+                  e.printStackTrace()
+              }
+
+          }
+
+      }
+        var mRunInfo =  CreatRunClass()
+        mRunInfo.setGuid("58504d802e7111e89a8700163e0221a7123");
+        mRunInfo.setName("123");
+        mRunInfo.setMinKm("4");
+        mRunInfo.setMoney("4");
+        mRunInfo.setRemark("123");
+        mRunInfo.setStartTime(1524499200);
+        mRunInfo.setNum("300");
+        mRunInfo.setImgUrl("http://image.baidu.com/search/detail?ct=503316480&z=0&ipn=d&word=%E5%9B%BE%E7%89%87&hs=0&pn=1&spn=0&di=113313207810&pi=0&rn=1&tn=baiduimagedetail&is=0%2C0&ie=utf-8&oe=utf-8&cl=2&lm=-1&cs=594559231%2C2167829292&os=2394225117%2C7942915&simid=3436308227%2C304878115&adpicid=0&lpn=0&ln=30&fr=ala&fm=&sme=&cg=&bdtype=0&oriquery=&objurl=http%3A%2F%2Fimg.taopic.com%2Fuploads%2Fallimg%2F120727%2F201995-120HG1030762.jpg&fromurl=ippr_z2C%24qAzdH3FAzdH3Fooo_z%26e3Bpw5rtv_z%26e3Bv54AzdH3Fejvp56AzdH3Fda8da0AzdH3Fdanll9_z%26e3Bip4s&gsm=0&islist=&querylist=");
+        mRunInfo.setWeekCount(3);
+        mRunInfo.setEndTime(1525104000);
+        ApiMethods().getAdd(ProgressObserver<Response<ResponseBody>>(listener,this@MainActivity),mRunInfo)
+    }
 }

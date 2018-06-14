@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2015-2016 Cheng Du YuePao Science And Technology Co.,Ltd. All Rights Reserved.
+  ~ This software is the confidential and proprietary information of
+  ~ YuePao Science And Technology Co.,Ltd.("Confidential Information").
+  ~ You shall not disclose such Confidential Information and shall
+  ~ use it only in accordance with the terms of the license agreement
+  ~ you entered into with YuePao.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingBottom="10dip"
+    android:paddingTop="10dip" >
+
+    <com.zl.map.RetrofitRequest.GifView
+        android:id="@+id/gif"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        custom:gif="@mipmap/loading" />
+
+    <TextView
+        android:id="@+id/waitingmsg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="10dip"
+        android:gravity="center_vertical"
+        android:textColor="#ffffff"
+        android:textSize="14dp"/>
+
+</LinearLayout>
