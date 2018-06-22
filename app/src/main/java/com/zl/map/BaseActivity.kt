@@ -5,17 +5,22 @@ import android.os.Bundle
 import android.content.pm.PackageManager
 import android.support.v4.content.ContextCompat
 import android.support.v4.app.ActivityCompat
+import com.zl.map.*
 
 
-
-
-
-open class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
+        setContentView(getLayoutResId())
 
-
+//        val contentFrameLayout = findViewById<View>(Window.ID_ANDROID_CONTENT) as ViewGroup
+//        val parentView = contentFrameLayout.getChildAt(0)
+//        if (parentView != null && Build.VERSION.SDK_INT >= 14) {
+//            parentView.setFitsSystemWindows(true)
+//        }
+//        StatusBarCompat().compat(this, 0xff000000.toInt())
     }
 
 
@@ -76,4 +81,12 @@ open class BaseActivity : AppCompatActivity() {
      fun doSDcardPermission() {
 
     }
+
+    /**
+     * 返回当前Activity布局文件的id
+     *
+     * @return
+     */
+    protected abstract fun getLayoutResId(): Int
+
 }

@@ -1,10 +1,10 @@
 package com.zl.map
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
 import android.graphics.Color
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -16,19 +16,18 @@ import com.amap.api.location.AMapLocationClientOption
 import com.amap.api.location.AMapLocationListener
 import com.amap.api.maps.AMap
 import com.amap.api.maps.LocationSource
-import com.amap.api.maps.MapView
 import com.amap.api.maps.model.BitmapDescriptorFactory
 import com.amap.api.maps.model.MyLocationStyle
 import com.amap.api.maps.offlinemap.OfflineMapManager
 import com.amap.api.maps.offlinemap.OfflineMapStatus
 import kotlinx.android.synthetic.main.activity_main.*
 import android.location.LocationManager
-import android.content.Context.LOCATION_SERVICE
 import android.content.Intent
 import android.content.ServiceConnection
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
+import android.media.MediaPlayer
+import android.os.Handler
 import android.os.IBinder
+import android.os.Message
 import com.amap.api.maps.CameraUpdateFactory
 import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.PolylineOptions
@@ -36,17 +35,18 @@ import com.zl.map.RetrofitRequest.ApiMethods
 import com.zl.map.RetrofitRequest.CreatRunClass
 import com.zl.map.RetrofitRequest.ProgressObserver
 import com.zl.map.RetrofitRequest.onSuccessListener
-import io.reactivex.internal.util.HalfSerializer.onNext
 import okhttp3.ResponseBody
 import retrofit2.Response
 import java.io.IOException
-import java.security.MessageDigest
-import java.security.NoSuchAlgorithmException
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,OfflineMapManager.OfflineMapDownloadListener,AMapLocationListener,View.OnClickListener
-    ,LocationSource,StepsService.CallBack{
+    ,LocationSource, StepsService.CallBack {
+    override fun getLayoutResId(): Int {
+        return R.layout.activity_main
+    }
 
     override fun StepChanged(value: Int) {
         Toast.makeText(this@MainActivity,"step:  "+value,Toast.LENGTH_SHORT).show()
@@ -59,6 +59,8 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
     private var offLineManager: OfflineMapManager? = null
     private var mPointList: ArrayList<LatLng>? = null;
     private var mIntent: Intent? = null
+    private var mMediaPlayer: MediaPlayer? = null
+    private var mMediaMap: ArrayList<MediaPlayer>? = null
     /**
      * 停止定位
      */
@@ -71,6 +73,10 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
         }
         mLocationClient = null
 
+        if (mMediaPlayer!!.isPlaying) {
+            mMediaPlayer!!.stop()
+        }
+        mMediaPlayer!!.release()
     }
 
     /**
@@ -129,7 +135,7 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
                 }
             }
             if (!hasMap) {
-                offLineManager!!.downloadByCityName(p0.cityCode)
+                offLineManager!!.downloadByCityCode(p0.cityCode)
             }
         }
     }
@@ -160,9 +166,9 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+//        setContentView(R.layout.activity_main)
 //        Log.e("TGA","GPS is open:  "+isOPen(this))
-        Log.e("TGA","SHA1:  "+getAppSH.sHA1(this))
+        Log.e("TGA","SHA1:  "+ getAppSH.sHA1(this))
 //        Toast.makeText(this,"GPS is open:  "+isOPen(this),Toast.LENGTH_SHORT).show()
         map_view.onCreate(savedInstanceState)
         mPointList = ArrayList<LatLng>()
@@ -190,6 +196,8 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
         }
 
         getData()
+
+        playMusic()
     }
 
     /**
@@ -319,4 +327,64 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
         mRunInfo.setEndTime(1525104000);
         ApiMethods().getAdd(ProgressObserver<Response<ResponseBody>>(listener,this@MainActivity),mRunInfo)
     }
+
+
+    fun playMusic() {
+//        var mSoundPool = SoundPool(25, AudioManager.STREAM_MUSIC,0)
+//
+//
+//        var mAudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+//        val streamVolumeCurrent = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC).toFloat()
+//
+//        val streamVolumeMax = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC).toFloat()
+//
+//        val volume = streamVolumeCurrent / streamVolumeMax
+//
+//        mSoundPool.play(mSoundPool.load(this@MainActivity,R.raw.welcome_to_yp,1),volume,volume,1,0,1.0f)
+
+//        mAudioManager.a
+            if (mMediaMap == null) {
+                mMediaMap = ArrayList<MediaPlayer>()
+            }
+            if (judgementTime()) {
+                mMediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.good_night)
+                mMediaMap!!.add(mMediaPlayer!!)
+            }else{
+                mMediaPlayer = MediaPlayer.create(this@MainActivity, R.raw.good_morning)
+                mMediaMap!!.add(mMediaPlayer!!)
+            }
+
+        var mPalyer = MediaPlayer.create(this@MainActivity, R.raw.welcome_to_yp)
+         mMediaMap!!.add(mPalyer)
+
+
+        mHandler.sendEmptyMessageDelayed(1,3000)
+    }
+
+
+    fun judgementTime() :Boolean{
+
+        var time = System.currentTimeMillis()
+        var mCalendar = Calendar.getInstance()
+        mCalendar.timeInMillis = time
+        var hour = mCalendar.get(Calendar.HOUR)
+
+        return hour <= 12
+
+    }
+
+    var mHandler = @SuppressLint("HandlerLeak")
+    object :Handler() {
+        override fun handleMessage(msg: Message?) {
+            super.handleMessage(msg)
+           for (no in mMediaMap!!) {
+               no.start()
+               Thread.sleep(1000)
+           }
+
+        }
+    }
+
+
 }
+
