@@ -37,9 +37,9 @@ class ApiMethods{
     /*public static void getTopMovie(Observer<Movie> observer, int start, int count) {
         ApiSubscribe(Api.getApiService().getTopMovie(start, count), observer);
     }*/
-//    fun getTopMovie(observer: Observer<Movie>, start: Int, count: Int) {
-//        ApiSubscribe(ApiStrategy().getMyApiService().getTopMovie(start, count), observer)
-//    }
+    fun getTopMovie(observer: Observer<Response<ResponseBody>>, start: Int, count: Int) {
+        ApiSubscribe(ApiStrategy().getMyApiService().getTopMovie(start, count), observer)
+    }
 //
 //    fun getTopmoney(observer: Observer<RunClassBean>, start: String) {
 //        ApiSubscribe(ApiStrategy.getApiService().getMoney(start), observer)

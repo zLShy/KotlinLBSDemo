@@ -24,7 +24,7 @@ import okhttp3.CacheControl
  * Created by zhangli on 2018/6/14.
  */
 class ApiStrategy {
-    var baseUrl = "http://runmate.runtogether.cn/runmate-paoban/v1/"
+    var baseUrl = "http://api.douban.com/v2/movie/"
     //读超时长，单位：毫秒
     val READ_TIME_OUT:Long = 7676
     //连接时长，单位：毫秒

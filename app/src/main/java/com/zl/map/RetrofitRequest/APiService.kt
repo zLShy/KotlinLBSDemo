@@ -30,7 +30,7 @@ interface APiService {
     fun getStart(@Body map: ByteArray): Observable<Response<ResponseBody>>
 
     @GET("top250")
-    fun getTopMovie(@Query("start") start: Int, @Query("count") count: Int): Observable<Movie>
+    fun getTopMovie(@Query("start") start: Int, @Query("count") count: Int): Observable<Response<ResponseBody>>
 
 //    @GET("score")
 //    fun getMoney(@Query("guid") guid: String): Observable<RunClassBean>
