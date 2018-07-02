@@ -8,12 +8,15 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.zl.map"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters "armeabi-v7a", "x86"
+        }
     }
     buildTypes {
         release {
@@ -49,7 +52,6 @@ dependencies {
     implementation files('libs/Android_Map3D_SDK_V6.2.0_20180427.jar')
     implementation files('libs/AMap_Location_V4.0.1_20180426.jar')
     compile 'com.android.support:multidex:1.0.1'
-
     compile 'io.reactivex.rxjava2:rxjava:2.0.8'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'com.squareup.retrofit2:retrofit:2.2.0'
@@ -60,7 +62,11 @@ dependencies {
     compile 'com.loopj.android:android-async-http:1.4.9'
     compile 'com.squareup.okhttp3:okhttp:3.9.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.9.0'
-
     compile 'com.qiniu:happy-dns:0.2.7'
-//    compile(name: 'EAccount_SDK_Android', ext: 'aar')
+    //    compile(name: 'EAccount_SDK_Android', ext: 'aar')
+    implementation project(':IMKit')
+    implementation project(':IMLib')
+    implementation files('libs/MiPush_SDK_Client_3_5_1.jar')
+    implementation project(':CallKit')
+    implementation project(':CallLib')
 }

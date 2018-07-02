@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.support.v4.content.ContextCompat
 import android.support.v4.app.ActivityCompat
 import com.zl.map.*
+import com.zl.map.Utils.Constants
 
 
 abstract class BaseActivity : AppCompatActivity() {
@@ -52,11 +53,11 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            WRITE_READ_EXTERNAL_CODE -> doSDcardPermission()
-            CAMERA_CODE -> takePhoto()
-            CALL_PHONE_CODE -> callPhone()
-            SEM_MESSAGE_CODE -> sendSEM()
-            PHONE_LOCATION_CODE -> getLocation()
+            Constants.WRITE_READ_EXTERNAL_CODE -> doSDcardPermission()
+            Constants.CAMERA_CODE -> takePhoto()
+            Constants.CALL_PHONE_CODE -> callPhone()
+            Constants.SEM_MESSAGE_CODE -> sendSEM()
+            Constants.PHONE_LOCATION_CODE -> getLocation()
             else -> {
             }
         }

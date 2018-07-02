@@ -35,6 +35,7 @@ import com.zl.map.RetrofitRequest.ApiMethods
 import com.zl.map.RetrofitRequest.CreatRunClass
 import com.zl.map.RetrofitRequest.ProgressObserver
 import com.zl.map.RetrofitRequest.onSuccessListener
+import com.zl.map.Utils.Constants
 import okhttp3.ResponseBody
 import retrofit2.Response
 import java.io.IOException
@@ -179,7 +180,7 @@ class MainActivity : BaseActivity(),OfflineMapManager.OfflineLoadedListener,Offl
         if (hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION)) {
             getLocation()
         }else{
-            requestPermission(PHONE_LOCATION_CODE,Manifest.permission.ACCESS_COARSE_LOCATION)
+            requestPermission(Constants.PHONE_LOCATION_CODE,Manifest.permission.ACCESS_COARSE_LOCATION)
         }
 
 //        setMapPoint()
