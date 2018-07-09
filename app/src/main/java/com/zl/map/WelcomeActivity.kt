@@ -32,7 +32,7 @@ class WelcomeActivity : BaseActivity() {
             super.handleMessage(msg)
             msg!!.what
 
-            startActivity(Intent(this@WelcomeActivity, IMActivity::class.java))
+            startActivity(Intent(this@WelcomeActivity, VideoActivity::class.java))
             finish()
         }
     }

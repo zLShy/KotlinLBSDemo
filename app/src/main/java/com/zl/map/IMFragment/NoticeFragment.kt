@@ -20,7 +20,10 @@ import android.annotation.TargetApi
 import android.net.Uri
 import android.support.annotation.NonNull
 import android.support.v4.content.ContextCompat
+import android.util.Log
 import io.rong.imlib.model.UserInfo
+import com.amap.api.maps.AMapUtils
+import com.amap.api.maps.model.LatLng
 
 
 /**
@@ -52,10 +55,17 @@ class NoticeFragment : Fragment(),RongIM.UserInfoProvider {
 //        requestPermission()
 
         RongIM.setUserInfoProvider(this@NoticeFragment,true)
+//        val distance = AMapUtils.calculateLineDistance(latLng1, latLng2)
+
+        var point1 = LatLng(30.588653,104.070605)
+        var point2 = LatLng(30.58179,104.070857)
+        var dis = AMapUtils.calculateArea(point1,point2)
+        Log.e("TGA","dis==="+dis)
 
         mBtn!!.setOnClickListener {
             view -> if (RongIM.getInstance() != null) {
             RongIM.getInstance().startPrivateChat(activity,"17308004973","our")
+//            RongIM.getInstance().startChatRoomChat(activity,"10088",true)
         }
         }
         return mView

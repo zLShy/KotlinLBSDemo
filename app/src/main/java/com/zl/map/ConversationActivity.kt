@@ -10,13 +10,15 @@ import com.zl.map.present.IMoviePresenterCompl
 import com.zl.map.view.IMovieView
 import kotlinx.android.synthetic.main.activity_conversation.*
 
-class ConversationActivity : FragmentActivity() {
-
+class ConversationActivity : BaseActivity() {
+    override fun getLayoutResId(): Int {
+        return R.layout.activity_conversation
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_conversation )
+//        setContentView(R.layout.activity_conversation )
 
         tv_announce_msg.text = intent.data.getQueryParameter("title")
 

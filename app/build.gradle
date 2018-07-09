@@ -69,4 +69,8 @@ dependencies {
     implementation files('libs/MiPush_SDK_Client_3_5_1.jar')
     implementation project(':CallKit')
     implementation project(':CallLib')
+
+//    compile files('libs/pldroid-shortvideo-x.y.z.jar')
+    compile files('libs/pldroid-shortvideo-1.10.0.jar')
+    compile files('libs/pldroid-player-2.0.5.jar')
 }

@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "/Users/zhangli/AndroidStudioProjects/KotlinLBSDemo/IMLib/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values-km/values-km.xml",
+            "map": [
+                {
+                    "source": "/Users/zhangli/.gradle/caches/transforms-1/files-1.1/support-compat-26.0.0.aar/37eebac63d889f0c6e112a4b718c300e/res/values-km/values-km.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "100",
+                        "endOffsets": "151"
+                    }
+                }
+            ]
+        }
+    ]
+}
